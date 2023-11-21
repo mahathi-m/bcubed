@@ -54,6 +54,7 @@ class BCubed:
         return actions
     
     def policy():
+        return action
 
     # add void squares
     def generateVoid(self):
