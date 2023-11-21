@@ -14,7 +14,12 @@ class BCubed:
         self.endState = endState
         self.void = []
         self.explorationProb = explorationProb
-        
+
+        # (state, action) -> {nextState -> ct} for all nextState
+        self.tCounts = {}
+        # (state, action) -> {nextState -> totalReward} for all nextState
+        self.rTotal = {}
+        self.pi = {}  # Optimal policy for each state. state -> action
 
     
     # helper functions
@@ -29,7 +34,7 @@ class BCubed:
     input: self
     returns: dict{action: transition probability}
     """
-    def getValidActions(self) -> Dict[Actions]:
+    def getActions(self) -> Dict[Actions]:
         actions = {} # direction: probability
         possible = []
         x = self.position[0]
@@ -58,33 +63,38 @@ class BCubed:
     """
     This function takes in the variables of the current game
     state and returns the next action to take. This function uses
-    the epsilon-greedy algorithm, choosing a random action with
-    probability = explorationProb. Otherwise, it will pick an 
-    action from the list of valid actions, according to the 
-    transition probability of each action.
-    
-    NOTE TO MAHATHI: in the pset, epsilon-greedy outputted the action given by
-    the optimal policy with prob: 1 - explorationProb. So I'm not sure if this function 
-    is right.
+    the epsilon-greedy algorithm: with probability explorationProb, 
+    it will pick a random action according to the transition probabilities.
+    Otherwise, it will follow the optimal policy to return an action.
 
-    input: self
+    input: self, state (tuple of coordinates, + other stuff if we want)
     returns: action
     """
-    def getAction(self) -> tuple:
-        validActions = self.getValidActions()
+    def getAction(self, state: tuple) -> tuple:
+        validActions = self.getActions()
 
         explorationProb = self.explorationProb
         options = ["exploit", "explore"]
         chosen_option = random.choices(options, weights=(1-explorationProb, explorationProb), k=1)
 
         if chosen_option[0] == "explore":
-            action = random.choices(list(validActions.keys()))
-            return action[0]
-        elif chosen_option[0] == "exploit":
-            """NOTE TO MAHATHI: regarding earlier note, should we change this to match the optimal policy??? 
-            instead of using validActions?"""
+            """NOTE TO MAHATHI: should we use self.actions here instead of getActions()?"""
             return random.choices(list(validActions.keys()), weights=list(validActions.values()), k=1)[0]
-    
+        elif chosen_option[0] == "exploit":
+            return self.pi[state]
+
+    """
+    NOTE TO MAHATHI: I can work on this function later. 
+    how similar do you think it should be to incorporateFeedback 
+    and valueIteration?
+    """
+    def updatePi(self, state, action, reward: int, nextState):
+        # update self.pi given (s, a, r, s')
+        # similar to incorporateFeedback and valueIteration in mountaincar
+        # update self.tCounts and self.rTotal
+
+
+    """Not sure what this is. I think this might have resulted from working on the file at the same time as you. oops!"""
     def getLegalActions(self):
         actions = {} # direction: probability
         possible = []
