@@ -69,7 +69,7 @@ class BCubed:
     Otherwise, it will follow the optimal policy to return an action.
 
     input: self, state (tuple of coordinates, + other stuff if we want)
-    returns: action
+    returns: action (coordinate of next move)
     """
     def getAction(self, state: tuple) -> tuple:
         explorationProb = self.explorationProb
@@ -91,9 +91,10 @@ class BCubed:
     NOTE TO MAHATHI: I can work on this function later. 
     how similar do you think it should be to incorporateFeedback 
     and valueIteration?
+    
+    Updates self.pi after seeing a (s, a, r, s') data point
     """
-    def updatePi(self, state, action, reward: int, nextState):
-        # update self.pi given (s, a, r, s')
+    def updatePi(self, state, action, reward: int, nextState) -> None:
         # similar to incorporateFeedback and valueIteration in mountaincar
         # update self.tCounts and self.rTotal
 
