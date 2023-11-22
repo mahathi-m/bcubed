@@ -62,9 +62,10 @@ class BCubed:
 
     """
     This function takes in the variables of the current game
-    state and returns the next action to take. This function uses
-    the epsilon-greedy algorithm: with probability explorationProb, 
-    it will pick a random action according to the transition probabilities.
+    state and returns the next action to take (and also adds 
+    it to visitedPositions). This function uses the epsilon-greedy 
+    algorithm: with probability explorationProb, it will pick a 
+    random action according to the transition probabilities.
     Otherwise, it will follow the optimal policy to return an action.
 
     input: self, state (tuple of coordinates, + other stuff if we want)
@@ -77,11 +78,15 @@ class BCubed:
         options = ["exploit", "explore"]
         chosen_option = random.choices(options, weights=(1-explorationProb, explorationProb), k=1)
 
+        action = None
         if chosen_option[0] == "explore":
-            """NOTE TO MAHATHI: should we use self.actions here instead of getActions()?"""
-            return random.choices(list(validActions.keys()), weights=list(validActions.values()), k=1)[0]
+            """NOTE TO MAHATHI: should we use self.actions here instead of getActions()???"""
+            action = random.choices(list(validActions.keys()), weights=list(validActions.values()), k=1)[0]
         elif chosen_option[0] == "exploit":
-            return self.pi[state]
+            action = self.pi[state]
+
+        self.visitedPositions.append(action)  # add action to visitedPositions!
+        return action
 
     """
     NOTE TO MAHATHI: I can work on this function later. 
