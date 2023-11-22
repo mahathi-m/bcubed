@@ -14,11 +14,15 @@ class BCubed:
         self.endState = endState
         self.void = []
         self.explorationProb = explorationProb
+        self.discount = 1  # for now
 
         # (state, action) -> {nextState -> ct} for all nextState
-        self.tCounts = {}
+        self.counts = {}
+        # (state, action) -> ct
+        self.totalCounts = {}
         # (state, action) -> {nextState -> totalReward} for all nextState
-        self.rTotal = {}
+        self.rewards = {}
+
         self.pi = {}  # Optimal policy for each state. state -> action
 
     
@@ -96,7 +100,23 @@ class BCubed:
     """
     def updatePi(self, state, action, reward: int, nextState) -> None:
         # similar to incorporateFeedback and valueIteration in mountaincar
-        # update self.tCounts and self.rTotal
+        self.counts[(state, action)][nextState] += 1
+        self.totalCounts[(state, action)] += 1
+        self.rewards[(state, action)] += reward
+
+        # Create dictionary mapping tuples of (state, action) to a list of (nextState, prob, reward) Tuples.
+        succAndRewardProb = {}
+        for s, a in self.counts.keys():
+            succAndRewardProb[(s, a)] = []
+            nextStates = self.counts[(s, a)]
+            for next in nextStates:
+                probability = nextStates[next] / self.totalCounts[(state, action)]
+                reward = self.rewards[(s, a)][next]
+                succAndRewardProb[(s, a)].append((next, probability, reward))
+
+        # need to implement valueIteration to create a optimal policy
+        self.pi = valueIteration(succAndRewardProb, self.discount)
+
 
 
     """Not sure what this is. I think this might have resulted from working on the file at the same time as you. oops!"""
