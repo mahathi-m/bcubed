@@ -117,7 +117,7 @@ class BCubed:
                 succAndRewardProb[(s, a)].append((next, probability, reward))
 
         # Return Q(state, action) based on V(state)
-        def computeQ(V: Dict[StateT, float], state: StateT, action: ActionT) -> float:
+        def computeQ(V, state, action) -> float:
             neighbors = succAndRewardProb[(state, action)]
             result = 0
             for neighbor in neighbors:
