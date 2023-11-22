@@ -1,5 +1,6 @@
 from typing import List, Tuple, Dict, Any, Union, Optional, Iterable
 import random
+from collections import defaultdict
 
 StateT = [str, str, Tuple[int, int]] #isStart, isEnd, position
 Actions = Any
@@ -91,6 +92,7 @@ class BCubed:
         self.visitedPositions.append(action)  # add action to visitedPositions!
         return action
 
+
     """
     NOTE TO MAHATHI: I can work on this function later. 
     how similar do you think it should be to valueIteration?
@@ -98,23 +100,56 @@ class BCubed:
     Updates self.pi after seeing a (s, a, r, s') data point
     """
     def updatePi(self, state, action, reward: int, nextState) -> None:
-        # similar to incorporateFeedback and valueIteration in mountaincar
         self.counts[(state, action)][nextState] += 1
         self.totalCounts[(state, action)] += 1
         self.rewards[(state, action)] += reward
 
         # Create dictionary mapping tuples of (state, action) to a list of (nextState, prob, reward) Tuples.
-        succAndRewardProb = {}
+        succAndRewardProb = defaultdict(list)
+        stateActions = defaultdict(set)
         for s, a in self.counts.keys():
             succAndRewardProb[(s, a)] = []
+            stateActions[state].add(action)
             nextStates = self.counts[(s, a)]
             for next in nextStates:
                 probability = nextStates[next] / self.totalCounts[(state, action)]
                 reward = self.rewards[(s, a)][next]
                 succAndRewardProb[(s, a)].append((next, probability, reward))
 
-        # need to implement valueIteration to create a optimal policy
-        self.pi = valueIteration(succAndRewardProb, self.discount)
+        # Return Q(state, action) based on V(state)
+        def computeQ(V: Dict[StateT, float], state: StateT, action: ActionT) -> float:
+            neighbors = succAndRewardProb[(state, action)]
+            result = 0
+            for neighbor in neighbors:
+                nextState = neighbor[0]
+                prob = neighbor[1]
+                reward = neighbor[2]
+                result += prob * (reward + self.discount * V[nextState])
+            return result
+
+        print('Running valueIteration...')
+        V = defaultdict(float)
+        while True:
+            newV = defaultdict(float)
+            policy = {}
+            for state in stateActions:
+                newV[state] = float('-inf')
+                actions = stateActions[state]
+                for action in actions:
+                    q = computeQ(V, state, action)
+                    if q > newV[state]:
+                        newV[state] = q
+                        policy[state] = action
+
+            all_less = True
+            for key in newV:
+                if abs(newV[key] - V[key]) > 0.001:
+                    all_less = False
+                    break
+            if all_less: break
+            V = newV
+
+        self.pi = policy
 
 
 
