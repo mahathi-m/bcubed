@@ -72,8 +72,6 @@ class BCubed:
     returns: action
     """
     def getAction(self, state: tuple) -> tuple:
-        validActions = self.getActions()
-
         explorationProb = self.explorationProb
         options = ["exploit", "explore"]
         chosen_option = random.choices(options, weights=(1-explorationProb, explorationProb), k=1)
@@ -81,6 +79,7 @@ class BCubed:
         action = None
         if chosen_option[0] == "explore":
             """NOTE TO MAHATHI: should we use self.actions here instead of getActions()???"""
+            validActions = self.getActions()
             action = random.choices(list(validActions.keys()), weights=list(validActions.values()), k=1)[0]
         elif chosen_option[0] == "exploit":
             action = self.pi[state]
