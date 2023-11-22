@@ -93,8 +93,7 @@ class BCubed:
 
     """
     NOTE TO MAHATHI: I can work on this function later. 
-    how similar do you think it should be to incorporateFeedback 
-    and valueIteration?
+    how similar do you think it should be to valueIteration?
     
     Updates self.pi after seeing a (s, a, r, s') data point
     """
