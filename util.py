@@ -23,7 +23,7 @@ class Board:
         self.voidSquares = voidSquares
 
         def displayBoard(self):
-            
+
 
 
 
@@ -174,34 +174,6 @@ class BCubed:
             V = newV
 
         self.pi = policy
-
-
-
-    """Not sure what this is. I think this might have resulted from working on the file at the same time as you. oops!"""
-    def getLegalActions(self):
-        actions = {} # direction: probability
-        possible = []
-        x = self.position[0]
-        y = self.position[1]
-        max_x = self.grid[0] - 1
-        max_y = self.grid[1] - 1
-
-        if (y - 1 > 0) and (x, y - 1) not in self.visitedPositions: # move north
-            possible.append((x, y - 1))
-        
-        if (y + 1 < max_y) and (x, y + 1) not in self.visitedPositions: # move south
-            possible.append((x, y + 1))
-        
-        if (x - 1 > 0) and (x - 1, y) not in self.visitedPositions: #move west
-            possible.append((x - 1, y))
-
-        if (x + 1 < max_x) and (x + 1, y) not in self.visitedPositions: # move east
-            possible.append((x + 1, y))
-        
-        return possible
-
-    def policy():
-        return action
 
     # add void squares
     def generateVoid(self):
