@@ -1,13 +1,37 @@
 from typing import List, Tuple, Dict, Any, Union, Optional, Iterable
 import random
+import pygame   
+
 from collections import defaultdict
 
 StateT = [str, str, Tuple[int, int]] #isStart, isEnd, position
 Actions = Any
 
+# board class that contains all information regarding the current level being solved
+"""
+size: tuple holding (# of cols, # of rows)
+voidSquares: list of coordinates represented as tuples that are considered to be in the void
+start: start state coordinate pair 
+end: end state coordinate pair
+"""
+class Board:
+    def __init(self, size, voidSquares, start, end):
+        self.cols = size[0]
+        self.rows = size[1]
+        self.startState = start
+        self.endState = end
+        self.voidSquares = voidSquares
+
+        def displayBoard(self):
+            
+
+
+
+
+
 class BCubed:
     # initialize important variables
-    def __init__(self, x = 4, y = 4, endState = (), startState = (0, 0), explorationProb: float = 0.2):
+    def __init__(self, x = 4, y = 4, endState = (), startState = (0, 0), explorationProb: float = 0.2, board = Board()):
         self.grid = (x, y)
         self.visitedPositions = []
         self.actions = {}
@@ -37,7 +61,7 @@ class BCubed:
     of moving to the square. 
 
     input: self
-    returns: dict{action: transition probability}
+    returns: dict --> {action: transition probability}
     """
     def getActions(self) -> Dict[Actions]:
         actions = {} # direction: probability
@@ -183,4 +207,6 @@ class BCubed:
     def generateVoid(self):
         self.grid 
 
+    # simulate a game of bcubed
     def simulate(self):
+
