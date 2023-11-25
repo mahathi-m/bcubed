@@ -1,11 +1,16 @@
 from typing import List, Tuple, Dict, Any, Union, Optional, Iterable
 import random
-import pygame   
+import pygame
+import time   
 
 from collections import defaultdict
 
+# new types
 StateT = [str, str, Tuple[int, int]] #isStart, isEnd, position
-Actions = Any
+Action = Any
+
+# global variables
+blockSize = 50  # height/width of blocks in grid
 
 # board class that contains all information regarding the current level being solved
 """
@@ -15,16 +20,35 @@ start: start state coordinate pair
 end: end state coordinate pair
 """
 class Board:
-    def __init(self, size, voidSquares, start, end):
+    def __init__(self, size = (0,0), voidSquares = [], start = (0,0), end = (0,0)):
         self.cols = size[0]
         self.rows = size[1]
         self.startState = start
         self.endState = end
         self.voidSquares = voidSquares
 
-        def displayBoard(self):
+    def displayBoard(self):
+        pygame.display.init()
 
+        # create screen
+        sizeX = 100 + self.cols * blockSize
+        sizeY = 100 + self.rows * blockSize
+        screen = pygame.display.set_mode([sizeX, sizeY])
 
+        # draw grid
+        #pygame.draw.rect(screen, (255,0,0), (10, 10, blockSize, blockSize))
+        for col in range(self.cols):
+            X = 50 + col * blockSize
+            for row in range(self.rows):
+                Y = 50 + row * blockSize
+                pygame.draw.rect(screen, (255,0,0), (X, Y, blockSize, blockSize), 2)
+
+        # display grid
+        timed = True
+        while timed:
+            pygame.display.update()
+            time.sleep(5)
+            timed = False
 
 
 
@@ -63,7 +87,7 @@ class BCubed:
     input: self
     returns: dict --> {action: transition probability}
     """
-    def getActions(self) -> Dict[Actions]:
+    def getActions(self) -> Dict[Action, float]:
         actions = {} # direction: probability
         possible = []
         x = self.position[0]
@@ -181,4 +205,4 @@ class BCubed:
 
     # simulate a game of bcubed
     def simulate(self):
-
+        i = 0
