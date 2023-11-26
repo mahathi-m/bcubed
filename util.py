@@ -90,13 +90,14 @@ class BCubed:
     returns: dict --> {action: transition probability}
     """
     def getActions(self) -> Dict[Action, float]:
+        
         actions = {} # direction: probability
         possible = []
         x = self.position[0]
         y = self.position[1]
         max_x = self.grid[0] - 1
         max_y = self.grid[1] - 1
-
+        """
         if (y - 1 > 0) and (x, y - 1) not in self.visitedPositions: # move north
             possible.append((x, y - 1))
         
@@ -113,6 +114,15 @@ class BCubed:
         for action in possible:
             actions[action] = (1 / total)
         
+        """
+        up = (self.position[0], self.position[1] - 1)
+        down = (self.position[0], self.position[1] + 1)
+        right = (self.position[0] + 1, self.position[1])
+        left = (self.position[0] - 1, self.position[1])
+        actions.append(up)
+        actions.append(down)
+        actions.append(right)
+        actions.append(left)
         return actions
 
     """
@@ -223,6 +233,7 @@ class BCubed:
                 action = self.getAction(self.position)
                 nextState = action
                 reward = self.getScore(self.position)
+                self.visitedPositions.append(self.position)
                 self.updatePi(self.position, action, reward, nextState)
                 gameReward += reward
                 self.position = nextState
