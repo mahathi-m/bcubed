@@ -2,6 +2,7 @@ import util
 
 # import classes
 from util import Board
+from util import BCubed
 
 # main method
 if __name__ == "__main__":
@@ -15,3 +16,5 @@ if __name__ == "__main__":
     testBoard = Board((1,2), voidSquares, start, end)
     testBoard.displayBoard()
     
+    game = BCubed(x = size[0], y = size[1], endState=end, startState=start)
+    game.simulate()

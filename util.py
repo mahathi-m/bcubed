@@ -218,7 +218,7 @@ class BCubed:
         numIterations = 100
         totalDiscount = 1
         totalReward = 0
-        state = self.startState
+        state = self.position
         
         for i in range(numIterations):
             gameReward = 0
@@ -228,6 +228,7 @@ class BCubed:
                 reward = self.getScore(state)
                 self.updatePi(state, action, reward, nextState)
                 gameReward += reward
+                state = nextState
             
             totalRewards.append(reward)
             print(self.pi)
