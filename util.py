@@ -109,20 +109,21 @@ class BCubed:
 
         if (x + 1 < max_x) and (x + 1, y) not in self.visitedPositions: # move east
             possible.append((x + 1, y))
-
-        total = len(possible)
-        for action in possible:
-            actions[action] = (1 / total)
-        
         """
         up = (self.position[0], self.position[1] - 1)
         down = (self.position[0], self.position[1] + 1)
         right = (self.position[0] + 1, self.position[1])
         left = (self.position[0] - 1, self.position[1])
-        actions.append(up)
-        actions.append(down)
-        actions.append(right)
-        actions.append(left)
+        possible.append(up)
+        possible.append(down)
+        possible.append(right)
+        possible.append(left)
+        total = len(possible)
+        for action in possible:
+            actions[action] = (1 / total)
+        
+        
+        
         return actions
 
     """
