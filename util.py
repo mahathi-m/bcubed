@@ -20,12 +20,13 @@ start: start state coordinate pair
 end: end state coordinate pair
 """
 class Board:
-    def __init__(self, size = (0,0), voidSquares = [], start = (0,0), end = (0,0)):
+    def __init__(self, size = (0,0), voidSquares = [], start = (0,0), end = (0,0), numValidBlocks = 2):
         self.cols = size[0]
         self.rows = size[1]
         self.startState = start
         self.endState = end
         self.voidSquares = voidSquares
+        self.numValidBlocks = numValidBlocks
 
     def displayBoard(self):
         pygame.display.init()
@@ -36,6 +37,7 @@ class Board:
         screen = pygame.display.set_mode([sizeX, sizeY])
 
         # draw grid
+        # TODO add different color scheme for start, end, and void squares
         #pygame.draw.rect(screen, (255,0,0), (10, 10, blockSize, blockSize))
         for col in range(self.cols):
             X = 50 + col * blockSize
@@ -147,7 +149,7 @@ class BCubed:
     
     Updates self.pi after seeing a (s, a, r, s') data point
     """
-    def updatePi(self, state, action, reward: int, nextState) -> None:
+    def updatePi(self, state, action, reward: float, nextState) -> None:
         self.counts[(state, action)][nextState] += 1
         self.totalCounts[(state, action)] += 1
         self.rewards[(state, action)] += reward
@@ -199,10 +201,35 @@ class BCubed:
 
         self.pi = policy
 
-    # add void squares
-    def generateVoid(self):
-        self.grid 
+    # define reward function to get score for particular state
+    def getScore(self, state) -> float:
+        score = 0
+        if state in self.void:
+            score += -100
+        if state == self.endState:
+            score += self.numValidBlocks/(self.numValidBlocks - len(self.visitedPositions) + 0.01)
+
+        return score
+
+   
+   # add void squares
+    
 
     # simulate a game of bcubed
-    def simulate(self):
-        i = 0
+    def simulate(board, self):
+        totalRewards = []  # The discounted rewards we get on each trial
+        numIterations = 100
+        totalDiscount = 1
+        totalReward = 0
+        state = self.startState
+        
+        for i in range(numIterations):
+            while state != self.endState:
+                action = self.getAction(state)
+                nextState = action
+                reward = self.getScore(state)
+                self.updatePi(state, action, reward, nextState)
+
+        ## do something with self.pi?
+        return totalRewards
+            
