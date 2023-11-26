@@ -142,9 +142,6 @@ class BCubed:
 
 
     """
-    NOTE TO MAHATHI: I can work on this function later. 
-    how similar do you think it should be to valueIteration?
-    
     Updates self.pi after seeing a (s, a, r, s') data point
     """
     def updatePi(self, state, action, reward: int, nextState) -> None:
