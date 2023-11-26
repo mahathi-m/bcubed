@@ -213,7 +213,7 @@ class BCubed:
     
 
     # simulate a game of bcubed
-    def simulate(board, self):
+    def simulate(self):
         totalRewards = []  # The discounted rewards we get on each trial
         numIterations = 100
         totalDiscount = 1
@@ -221,12 +221,15 @@ class BCubed:
         state = self.startState
         
         for i in range(numIterations):
+            gameReward = 0
             while state != self.endState:
                 action = self.getAction(state)
                 nextState = action
                 reward = self.getScore(state)
                 self.updatePi(state, action, reward, nextState)
-
-        ## do something with self.pi?
+                gameReward += reward
+            
+            totalRewards.append(reward)
+            print(self.pi)
         return totalRewards
             
