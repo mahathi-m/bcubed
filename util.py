@@ -132,7 +132,7 @@ class BCubed:
         chosen_option = random.choices(options, weights=(1-explorationProb, explorationProb), k=1)
 
         action = None
-        if chosen_option[0] == "explore":
+        if chosen_option[0] == "explore" or state not in self.pi:
             """NOTE TO MAHATHI: should we use self.actions here instead of getActions()???"""
             validActions = self.getActions()
             action = random.choices(list(validActions.keys()), weights=list(validActions.values()), k=1)[0]
