@@ -54,7 +54,7 @@ class Board:
             timed = False
             pygame.display.flip()"""
 
-        # TODO: hi Mahathi dear. idk why the above commented out code doesn't display. but this code (below) displays the grid!
+        # TODO: hi Mahathi dear. idk why the above commented-out code doesn't display. but this code (below) displays the grid!
         running = True
         while running:
             for event in pygame.event.get():
