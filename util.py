@@ -68,11 +68,11 @@ class BCubed:
         self.discount = 1  # for now
 
         # (state, action) -> {nextState -> ct} for all nextState
-        self.counts = {}
+        self.counts = defaultdict(defaultdict(int))
         # (state, action) -> ct
-        self.totalCounts = {}
+        self.totalCounts = defaultdict(int)
         # (state, action) -> {nextState -> totalReward} for all nextState
-        self.rewards = {}
+        self.rewards = defaultdict(defaultdict(int))
 
         self.pi = {}  # Optimal policy for each state. state -> action
 
