@@ -68,11 +68,11 @@ class BCubed:
         self.discount = 1  # for now
 
         # (state, action) -> {nextState -> ct} for all nextState
-        self.counts = defaultdict(defaultdict(int))
+        self.counts = defaultdict(lambda: defaultdict(int))
         # (state, action) -> ct
         self.totalCounts = defaultdict(int)
         # (state, action) -> {nextState -> totalReward} for all nextState
-        self.rewards = defaultdict(defaultdict(int))
+        self.rewards = defaultdict(lambda: defaultdict(float))
 
         self.pi = {}  # Optimal policy for each state. state -> action
 
@@ -160,7 +160,7 @@ class BCubed:
     def updatePi(self, state, action, reward: float, nextState) -> None:
         self.counts[(state, action)][nextState] += 1
         self.totalCounts[(state, action)] += 1
-        self.rewards[(state, action)] += reward
+        self.rewards[(state, action)][nextState] += reward
 
         # Create dictionary mapping tuples of (state, action) to a list of (nextState, prob, reward) Tuples.
         succAndRewardProb = defaultdict(list)
