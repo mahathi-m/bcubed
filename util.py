@@ -185,7 +185,7 @@ class BCubed:
                 result += prob * (reward + self.discount * V[nextState])
             return result
 
-        print('Running valueIteration...')
+        #print('Running valueIteration...')
         V = defaultdict(float)
         while True:
             newV = defaultdict(float)
@@ -221,7 +221,7 @@ class BCubed:
 
    
    # add void squares
-    
+
 
     # simulate a game of bcubed
     def simulate(self):
@@ -240,6 +240,7 @@ class BCubed:
                 self.position = nextState
             
             totalRewards.append(gameReward)
-            print(self.pi)
+            #print(self.pi)
+            print(self.position)
         return totalRewards
             
