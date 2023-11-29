@@ -47,11 +47,21 @@ class Board:
                 pygame.draw.rect(screen, (255,0,0), (X, Y, blockSize, blockSize), 2)
 
         # display grid
-        timed = True
+        """timed = True
         while timed:
             pygame.display.update()
             time.sleep(5)
             timed = False
+            pygame.display.flip()"""
+
+        # TODO: hi Mahathi dear. idk why the above commented out code doesn't display. but this code (below) displays the grid!
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+            pygame.display.flip()
 
 
 
