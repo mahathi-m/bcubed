@@ -35,6 +35,7 @@ class Board:
         sizeX = 100 + self.cols * blockSize
         sizeY = 100 + self.rows * blockSize
         screen = pygame.display.set_mode([sizeX, sizeY])
+        pygame.display.set_caption('B-Cubed!')
 
         # draw grid
         # TODO add different color scheme for start, end, and void squares
