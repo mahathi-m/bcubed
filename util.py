@@ -40,20 +40,27 @@ class Board:
         # draw grid
         # TODO add different color scheme for start, end, and void squares
         #pygame.draw.rect(screen, (255,0,0), (10, 10, blockSize, blockSize))
+        i = 0
         for col in range(self.cols):
             X = 50 + col * blockSize
             for row in range(self.rows):
                 Y = 50 + row * blockSize
-                pygame.draw.rect(screen, (255,0,0), (X, Y, blockSize, blockSize), 2)
+                color = (255,0,0)
+                if (row, col) == (self.cols - 1, self.rows - 2): color = (0,255,0)
+                pygame.draw.rect(screen, color, (X, Y, blockSize, blockSize), 2)
+                i += 1
 
         # display grid
-        """timed = True
-        while timed:
+        timed = True
+        i = 0
+        while i < 10000:
             pygame.display.update()
-            time.sleep(5)
+            #time.sleep(2)
+            i += 1
             timed = False
-            pygame.display.flip()"""
+            pygame.display.flip()
 
+        """
         # TODO: hi Mahathi dear. idk why the above commented-out code doesn't display. but this code (below) displays the grid!
         running = True
         while running:
@@ -64,19 +71,24 @@ class Board:
             pygame.display.flip()
 
 
-
+        """
 
 class BCubed:
     # initialize important variables
-    def __init__(self, x = 4, y = 4, endState = (), startState = (0, 0), explorationProb: float = 0.2, board = Board()):
+    def __init__(self, x, y, endState, startState, explorationProb: float = 0.2, board = Board()):
         self.grid = (x, y)
         self.visitedPositions = []
         self.actions = {}
+        self.start = startState
+        #print("start: {}".format(self.start))
         self.position = startState
         self.endState = endState
+        #print("end: {}".format(self.endState))
         self.void = []
         self.explorationProb = explorationProb
         self.discount = 1  # for now
+        self.numValidBlocks = x * y - 1 #for now
+        self.finalPolicy = {}
 
         # (state, action) -> {nextState -> ct} for all nextState
         self.counts = defaultdict(lambda: defaultdict(int))
@@ -161,7 +173,7 @@ class BCubed:
         elif chosen_option[0] == "exploit":
             action = self.pi[state]
 
-        self.visitedPositions.append(action)  # add action to visitedPositions!
+        #self.visitedPositions.add(action)  # add action to visitedPositions!
         return action
 
 
@@ -209,7 +221,10 @@ class BCubed:
                     if q > newV[state]:
                         newV[state] = q
                         policy[state] = action
+            #print(V)
+            #print(newV)
 
+            #print(policy)
             all_less = True
             for key in newV:
                 if abs(newV[key] - V[key]) > 0.001:
@@ -217,17 +232,53 @@ class BCubed:
                     break
             if all_less: break
             V = newV
-
-        self.pi = policy
+        #print("new policy: {}".format(policy))
+        #print("old policy: {}".format(self.pi))
+        for key in policy.keys():
+            self.pi[key] = policy[key]
 
     # define reward function to get score for particular state
+    def outOfBounds(self, state) -> bool:
+        if state[0] < 0  or state[0] >= self.grid[0]:
+            return True
+        
+        if state[1] < 0 or state[1] >= self.grid[1]:
+            return True
+        
+        return False
+    
     def getScore(self, state) -> float:
         score = 0
-        if state in self.void:
-            score += -100
-        if state == self.endState:
-            score += self.numValidBlocks/(self.numValidBlocks - len(self.visitedPositions) + 0.01)
+        
+        def outOfBounds(state) -> bool:
+            if state[0] < 0  or state[0] >= self.grid[0]:
+                return True
+            
+            if state[1] < 0 or state[1] >= self.grid[1]:
+                return True
+            
+            return False
 
+        
+        #print(state)
+        inVoid = state in self.void
+        #print(inVoid)
+        inVisited = state in self.visitedPositions
+        #if inVisited: print(self.visitedPositions)
+        #print(outOfBounds(state))
+        if  inVoid or outOfBounds(state):
+            score += -100
+            self.position = self.endState
+            return score
+        
+        if state == self.endState:
+            score += 100
+            score += self.numValidBlocks/abs((self.numValidBlocks - len(self.visitedPositions) + 0.01))
+            #print(self.numValidBlocks)
+            #print(self.visitedPositions)
+            #print(abs((self.numValidBlocks - len(self.visitedPositions) + 0.01)))
+
+        score += 10
         return score
 
    
@@ -236,22 +287,37 @@ class BCubed:
 
     # simulate a game of bcubed
     def simulate(self):
-        totalRewards = []  # The discounted rewards we get on each trial
-        numIterations = 100
+        totalRewards = defaultdict(list)  # The discounted rewards we get on each trial and matching policy 
+        numIterations = 1000
         
         for i in range(numIterations):
+            #print("iteration {}".format(i))
             gameReward = 0
-            while self.position != self.endState:
-                action = self.getAction(self.position)
-                nextState = action
-                reward = self.getScore(self.position)
+            self.visitedPositions = []
+            self.position = self.start
+            while True:
+                old_position = self.position
                 self.visitedPositions.append(self.position)
-                self.updatePi(self.position, action, reward, nextState)
+                #("before get action")
+                action = self.getAction(self.position)
+                #print("action: {}".format(action))
+                nextState = action
+                reward = self.getScore(action)
                 gameReward += reward
+                self.updatePi(old_position, action, reward, nextState)
+                
+                
+                if nextState == self.endState or self.position == self.endState: break
+                #self.updatePi(self.position, action, reward, nextState) 
                 self.position = nextState
             
-            totalRewards.append(gameReward)
-            #print(self.pi)
-            print(self.position)
+            totalRewards[gameReward].append(self.pi)
+            #print(gameReward)
+        print(self.pi)  
+        #print(totalRewards)  
+        #print(totalRewards.keys())
+        key = max(totalRewards.keys())
+        print(key)
+        print(totalRewards[key])
         return totalRewards
             
